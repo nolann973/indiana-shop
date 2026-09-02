@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catalogue - Indiana Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+
+    :root {
+      --gold: #d89b1d;
+      --gold-light: #f0b93a;
+      --gold-dim: rgba(216,155,29,0.10);
+      --gold-border: rgba(216,155,29,0.25);
+      --white: #ffffff;
+      --text-soft: rgba(255,255,255,0.75);
+      --text-muted: rgba(255,255,255,0.45);
+      --bg: #060606;
+      --bg-card: rgba(255,255,255,0.032);
+      --border: rgba(255,255,255,0.07);
+      --shadow-gold: 0 0 40px rgba(216,155,29,0.15);
+      --transition: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-out: cubic-bezier(0.0, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit }
+    img { max-width: 100%; display: block }
+    .container { width: min(1300px, calc(100% - 48px)); margin: 0 auto }
+
+    /* ═══════════════════════════════════════════
+       PROGRESS BAR
+    ═══════════════════════════════════════════ */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px rgba(216,155,29,0.6);
+    }
+
+    /* ═══════════════════════════════════════════
+       CURSOR GLOW
+    ═══════════════════════════════════════════ */
+    #cursor-glow {
+      position: fixed;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(216,155,29,0.055) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    /* ═══════════════════════════════════════════
+       AGE MODAL
+    ═══════════════════════════════════════════ */
+    .age-modal {
+      position: fixed; inset: 0; z-index: 3000;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(20px) saturate(0.5);
+      animation: modalIn 0.5s var(--ease-out) both;
+    }
+    .age-modal.hidden { display: none }
+    @keyframes modalIn {
+      from { opacity: 0 }
+      to   { opacity: 1 }
+    }
+    .age-modal-card {
+      width: min(100%, 520px);
+      padding: 48px 40px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(28,28,28,0.99), rgba(14,14,14,0.99));
+      border: 1px solid var(--gold-border);
+      text-align: center;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), var(--shadow-gold);
+      animation: cardUp 0.6s var(--ease-out) 0.1s both;
+    }
+    @keyframes cardUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.96) }
+      to   { opacity: 1; transform: translateY(0) scale(1) }
+    }
+    .age-modal-icon {
+      width: 80px; height: 80px; margin: 0 auto 24px;
+      border-radius: 24px; display: flex; align-items: center; justify-content: center;
+      background: var(--gold-dim); color: var(--gold); font-size: 2rem;
+      border: 1px solid var(--gold-border);
+    }
+    .age-modal-label {
+      display: inline-block; color: var(--gold); font-size: .8rem;
+      font-weight: 700; letter-spacing: 3px; margin-bottom: 14px; text-transform: uppercase;
+    }
+    .age-modal-card h2 {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: clamp(2.2rem, 5vw, 3rem); line-height: .95; margin-bottom: 18px;
+      color: #fff;
+    }
+    .age-modal-card p {
+      color: var(--text-soft); line-height: 1.9; margin-bottom: 36px; font-size: 1rem;
+    }
+    .age-modal-card strong { color: var(--gold) }
+    .age-modal-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap }
+    .btn-primary, .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 15px 28px; border-radius: 14px; font-weight: 600; font-size: 0.97rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.25s var(--transition); border: none; cursor: pointer; letter-spacing: 0.2px;
+    }
+    .btn-primary {
+      background: var(--gold); color: #0e0e0e;
+      box-shadow: 0 8px 24px rgba(216,155,29,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      background: var(--gold-light);
+      box-shadow: 0 14px 32px rgba(216,155,29,0.45);
+    }
+    .btn-primary:active { transform: translateY(0) }
+    .btn-secondary {
+      background: rgba(255,255,255,0.05); color: var(--text-soft);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { color: #fff; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08) }
+
+    /* ═══════════════════════════════════════════
+       NAVBAR
+    ═══════════════════════════════════════════ */
+    .navbar {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 40px); max-width: 1300px; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(10,10,10,0.5);
+      backdrop-filter: blur(20px) saturate(1.2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: all 0.4s var(--transition);
+    }
+    .navbar.scrolled {
+      background: rgba(6,6,6,0.85);
+      border-color: var(--gold-border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(216,155,29,0.06);
+      padding: 12px 22px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0 }
+    .brand-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; background: #fff; padding: 2px }
+    .logo {
+      font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px; color: #f2f2f2; white-space: nowrap;
+    }
+    .menu-toggle {
+      display: none; width: 44px; height: 44px; border: none; border-radius: 12px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      cursor: pointer; align-items: center; justify-content: center;
+      flex-direction: column; gap: 5px; transition: 0.3s ease;
+    }
+    .menu-toggle span { display: block; width: 20px; height: 2px; background: #fff; border-radius: 20px; transition: 0.3s ease }
+    .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg) }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0) }
+    .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg) }
+    .nav-links { display: flex; list-style: none; gap: 4px; align-items: center }
+    .nav-links a {
+      position: relative; color: var(--text-soft); font-size: 0.93rem; font-weight: 500;
+      padding: 8px 14px; border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.05) }
+    .nav-links a.active { color: var(--gold) }
+    .nav-links a.active::after {
+      content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 4px; border-radius: 50%; background: var(--gold);
+    }
+    .phone {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text-soft); font-size: 0.93rem; font-weight: 500;
+      transition: color 0.2s; flex-shrink: 0;
+    }
+    .phone i { color: var(--gold) }
+    .phone:hover { color: var(--gold) }
+
+    /* ═══════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════ */
+    .catalog-hero {
+      min-height: 95vh;
+      background:
+        linear-gradient(175deg, rgba(0,0,0,0) 0%, rgba(6,6,6,0.6) 50%, rgba(6,6,6,1) 100%),
+        linear-gradient(105deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.08) 55%),
+        url('/img/catalogue-hero.jpg') center center / cover no-repeat;
+      display: flex; align-items: flex-end;
+      padding: 0 0 100px;
+      position: relative; overflow: hidden;
+    }
+    /* Grain texture */
+    .catalog-hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.5; mix-blend-mode: overlay;
+    }
+    .catalog-hero::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+      height: 280px; background: linear-gradient(to top, var(--bg) 20%, transparent);
+      pointer-events: none; z-index: 2;
+    }
+    /* Gold ambient light */
+    .hero-ambient {
+      position: absolute; bottom: 20%; left: -10%;
+      width: 60%; height: 60%;
+      background: radial-gradient(ellipse, rgba(216,155,29,0.06) 0%, transparent 65%);
+      pointer-events: none; z-index: 1;
+    }
+    .hero-content { position: relative; z-index: 3; padding-top: 160px }
+
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 20px; font-size: 0.88rem; color: var(--text-muted);
+      opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.2s forwards;
+    }
+    .breadcrumb a { color: var(--text-muted); transition: color 0.2s }
+    .breadcrumb a:hover { color: var(--gold) }
+    .breadcrumb i { font-size: 0.65rem; opacity: 0.5 }
+    .breadcrumb span { color: var(--gold) }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--gold); font-size: 0.82rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px; padding: 8px 16px;
+      border: 1px solid var(--gold-border); border-radius: 999px;
+      background: var(--gold-dim); backdrop-filter: blur(8px);
+      opacity: 0; animation: fadeUp 0.7s var(--ease-out) 0.35s forwards;
+    }
+    .hero-title {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: clamp(4rem, 9vw, 8.5rem);
+      line-height: 0.88; color: #f2f2f2; margin-bottom: 24px;
+      letter-spacing: -2px;
+      opacity: 0; animation: fadeUp 0.9s var(--ease-out) 0.45s forwards;
+    }
+    .hero-title em { color: var(--gold); font-style: normal }
+    .hero-desc {
+      color: var(--text-soft); font-size: 1.08rem; line-height: 1.9;
+      max-width: 620px; margin-bottom: 36px;
+      opacity: 0; animation: fadeUp 0.8s var(--ease-out) 0.6s forwards;
+    }
+
+    /* Stat pills */
+    .hero-stats {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px;
+      opacity: 0; animation: fadeUp 0.8s var(--ease-out) 0.7s forwards;
+    }
+    .hero-stat-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px; border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .hero-stat-pill:hover { border-color: var(--gold-border); background: var(--gold-dim) }
+    .hero-stat-num { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: var(--gold); line-height: 1 }
+    .hero-stat-label { font-size: 0.82rem; color: var(--text-muted); letter-spacing: 0.5px }
+
+    .hero-buttons {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.8s var(--ease-out) 0.8s forwards;
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--text-muted); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      opacity: 0; animation: fadeIn 1s ease 1.5s forwards;
+      transition: opacity 0.3s;
+    }
+    .scroll-indicator.hide { opacity: 0 !important }
+    .scroll-indicator-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1) }
+      50% { opacity: 1; transform: scaleY(1.1) }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0 }
+      to   { opacity: 1 }
+    }
+
+    /* ═══════════════════════════════════════════
+       WARNING SECTION
+    ═══════════════════════════════════════════ */
+    .warning-section { padding: 56px 0; background: var(--bg) }
+    .warning-box {
+      display: grid; grid-template-columns: 72px 1fr; gap: 24px; align-items: flex-start;
+      padding: 28px 32px; border-radius: 20px;
+      background: linear-gradient(135deg, rgba(50,35,10,0.4), rgba(15,12,6,0.95));
+      border: 1px solid var(--gold-border);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .warning-box:hover { border-color: rgba(216,155,29,0.45); box-shadow: var(--shadow-gold) }
+    .warning-icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--gold-dim); color: var(--gold); font-size: 1.4rem;
+      border: 1px solid var(--gold-border);
+    }
+    .warning-label { display: inline-block; color: var(--gold); font-size: 0.8rem; font-weight: 700; letter-spacing: 2.5px; margin-bottom: 8px; text-transform: uppercase }
+    .warning-content h2 {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: clamp(1.4rem, 2.5vw, 2rem); margin-bottom: 10px; color: #f3f3f3;
+    }
+    .warning-content p { color: rgba(255,255,255,0.6); line-height: 1.8; font-size: 0.95rem }
+    .warning-content p + p { margin-top: 6px }
+    .warning-content strong { color: var(--gold) }
+
+    /* ═══════════════════════════════════════════
+       SEARCH & FILTER
+    ═══════════════════════════════════════════ */
+    .filter-section {
+      position: sticky; top: 80px; z-index: 100;
+      padding: 20px 0;
+      background: rgba(6,6,6,0.8);
+      backdrop-filter: blur(24px) saturate(1.5);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+    }
+    .filter-section.elevated { box-shadow: 0 4px 40px rgba(0,0,0,0.5) }
+
+    .filter-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap }
+    .search-wrap { position: relative; flex: 1; min-width: 240px }
+    .search-wrap i {
+      position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); font-size: 0.9rem; pointer-events: none;
+      transition: color 0.2s;
+    }
+    .search-input {
+      width: 100%; padding: 13px 18px 13px 46px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: #fff; font-size: 0.93rem; font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .search-input::placeholder { color: var(--text-muted) }
+    .search-input:focus {
+      border-color: var(--gold-border);
+      background: var(--gold-dim);
+      box-shadow: 0 0 0 4px rgba(216,155,29,0.08);
+    }
+    .search-wrap:focus-within i { color: var(--gold) }
+
+    /* Clear button */
+    .search-clear {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--text-muted); cursor: pointer;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s, color 0.2s;
+      padding: 4px; font-size: 0.85rem;
+    }
+    .search-clear.visible { opacity: 1; pointer-events: auto }
+    .search-clear:hover { color: var(--gold) }
+
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap }
+    .filter-pill {
+      padding: 10px 16px; border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text-soft); font-size: 0.87rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s var(--transition); white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .filter-pill:hover { border-color: var(--gold-border); color: #fff; background: rgba(255,255,255,0.07) }
+    .filter-pill.active {
+      background: var(--gold); color: #0e0e0e;
+      border-color: var(--gold);
+      box-shadow: 0 4px 16px rgba(216,155,29,0.3);
+    }
+    .filter-pill .pill-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(0,0,0,0.15); font-size: 0.75rem; margin-left: 4px;
+    }
+    .filter-pill.active .pill-count { background: rgba(0,0,0,0.2) }
+
+    .results-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0 0; flex-wrap: wrap; gap: 8px;
+    }
+    .results-count { color: var(--text-muted); font-size: 0.88rem }
+    .results-count span { color: var(--gold); font-weight: 700 }
+    .view-toggle { display: flex; gap: 4px }
+    .view-btn {
+      width: 34px; height: 34px; border-radius: 8px; display: flex;
+      align-items: center; justify-content: center;
+      background: none; border: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+    }
+    .view-btn.active, .view-btn:hover { color: var(--gold); border-color: var(--gold-border); background: var(--gold-dim) }
+
+    /* ═══════════════════════════════════════════
+       CATEGORIES GRID SECTION
+    ═══════════════════════════════════════════ */
+    .categories-section {
+      padding: 60px 0 100px;
+      background: var(--bg);
+    }
+    .categories-section .container { position: relative; z-index: 1 }
+
+    /* Section heading */
+    .section-heading { margin-bottom: 48px }
+    .section-label {
+      display: inline-block; color: var(--gold); font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 3px; margin-bottom: 12px; text-transform: uppercase;
+    }
+    .section-title {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: clamp(2.2rem, 4.5vw, 4rem); line-height: 0.93;
+      color: #f1f1f1; margin-bottom: 14px;
+    }
+    .section-subtitle { color: var(--text-muted); font-size: 1rem; line-height: 1.75; max-width: 680px }
+
+    /* Grid */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      transition: all 0.3s var(--transition);
+    }
+    .category-grid.list-view { grid-template-columns: 1fr }
+
+    /* ── CARD ── */
+    .category-card {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.45s var(--transition), border-color 0.3s, box-shadow 0.45s;
+      cursor: pointer;
+      --delay: 0s;
+    }
+    .category-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--gold-border);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(216,155,29,0.1);
+    }
+    .category-card.hidden-card {
+      display: none;
+    }
+    /* Entry animation */
+    .category-card.animating {
+      opacity: 0; transform: translateY(24px) scale(0.98);
+      animation: cardReveal 0.5s var(--ease-out) var(--delay) forwards;
+    }
+    @keyframes cardReveal {
+      to { opacity: 1; transform: translateY(0) scale(1) }
+    }
+
+    /* Image area */
+    .category-image {
+      position: relative; height: 240px;
+      background-size: cover; background-position: center;
+      overflow: hidden;
+    }
+    .category-image::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.05) 55%);
+      z-index: 1;
+    }
+    .category-image-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      transition: transform 0.6s var(--transition);
+    }
+    .category-card:hover .category-image-bg { transform: scale(1.06) }
+
+    .category-badge {
+      position: absolute; top: 14px; left: 14px; z-index: 2;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(0,0,0,0.6); border: 1px solid var(--gold-border);
+      color: var(--gold); font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 1px; backdrop-filter: blur(8px);
+      text-transform: uppercase;
+    }
+    .category-count {
+      position: absolute; top: 14px; right: 14px; z-index: 2;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(0,0,0,0.5); border: 1px solid var(--border);
+      color: var(--text-soft); font-size: 0.75rem; backdrop-filter: blur(8px);
+    }
+    .category-footer-img {
+      position: absolute; bottom: 14px; left: 14px; right: 14px; z-index: 2;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .category-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold);
+      font-size: 0.9rem;
+    }
+    .category-footer-img h3 {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: 1.75rem; line-height: 1; color: #fff; letter-spacing: 0.5px;
+    }
+
+    /* Body */
+    .category-body { padding: 20px 22px 22px }
+    .category-desc {
+      color: rgba(255,255,255,0.55); line-height: 1.8; font-size: 0.93rem;
+      margin-bottom: 16px; min-height: 60px;
+    }
+    .category-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px }
+    .category-tag {
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      color: var(--text-muted); font-size: 0.78rem; font-weight: 500;
+    }
+
+    .card-btn {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 18px; border-radius: 12px;
+      background: rgba(255,255,255,0.04); color: var(--text-soft);
+      border: 1px solid var(--border); font-weight: 600; font-size: 0.92rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.22s var(--transition); cursor: pointer;
+    }
+    .card-btn:hover {
+      background: var(--gold); color: #0e0e0e; border-color: var(--gold);
+      box-shadow: 0 6px 20px rgba(216,155,29,0.3);
+    }
+    .card-btn .btn-arrow {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .card-btn:hover .btn-arrow { background: rgba(0,0,0,0.12); transform: translateX(3px) }
+    .card-btn i { font-size: 0.8rem }
+
+    /* List view adaptation */
+    .category-grid.list-view .category-card {
+      display: grid; grid-template-columns: 260px 1fr;
+    }
+    .category-grid.list-view .category-image { height: 100%; min-height: 180px }
+    .category-grid.list-view .category-body { display: flex; flex-direction: column; justify-content: center }
+
+    /* No results */
+    .no-results {
+      display: none; padding: 80px 20px; text-align: center; color: var(--text-muted);
+    }
+    .no-results.show { display: block }
+    .no-results-icon {
+      width: 80px; height: 80px; border-radius: 24px; margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      font-size: 1.8rem; color: rgba(255,255,255,0.15);
+    }
+    .no-results p { font-size: 1rem; color: var(--text-muted) }
+    .no-results small { font-size: 0.88rem; display: block; margin-top: 6px; opacity: 0.6 }
+
+    /* ═══════════════════════════════════════════
+       DETAIL SECTIONS
+    ═══════════════════════════════════════════ */
+    .detail-section {
+      padding: 100px 0;
+      background: linear-gradient(180deg, var(--bg) 0%, rgba(12,10,6,1) 50%, var(--bg) 100%);
+      border-top: 1px solid var(--border);
+    }
+    .section-heading-center {
+      text-align: center; margin-bottom: 72px;
+    }
+
+    .catalog-block {
+      display: grid; grid-template-columns: 1fr 1.15fr;
+      gap: 56px; align-items: center; margin-bottom: 100px;
+    }
+    .catalog-block:last-child { margin-bottom: 0 }
+    .catalog-block.reverse { grid-template-columns: 1.15fr 1fr }
+
+    .catalog-text .small-label {
+      display: inline-block; color: var(--gold); font-weight: 700;
+      letter-spacing: 2px; margin-bottom: 16px; font-size: 0.78rem;
+      text-transform: uppercase; padding: 5px 12px;
+      border: 1px solid var(--gold-border); border-radius: 999px; background: var(--gold-dim);
+    }
+    .catalog-text h3 {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: clamp(2.2rem, 4vw, 3.2rem); line-height: 0.93; margin-bottom: 20px;
+    }
+    .catalog-text p { color: rgba(255,255,255,0.58); line-height: 1.9; margin-bottom: 24px; font-size: 0.97rem }
+
+    .catalog-list { list-style: none; display: grid; gap: 10px; margin-bottom: 28px }
+    .catalog-list li {
+      position: relative; padding-left: 22px;
+      color: rgba(255,255,255,0.72); font-size: 0.95rem;
+    }
+    .catalog-list li::before {
+      content: ''; position: absolute; left: 0; top: 9px;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+    }
+
+    .mini-tags { display: flex; gap: 8px; flex-wrap: wrap }
+    .mini-tags span {
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: #fff; font-size: 0.88rem; font-weight: 500;
+    }
+
+    .catalog-gallery { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px }
+    .main-image {
+      min-height: 460px; border-radius: 22px; overflow: hidden;
+      border: 1px solid var(--border); background: #111; grid-row: span 3;
+    }
+    .main-image img { width: 100%; height: 100%; object-fit: cover }
+    .thumb {
+      border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
+      background: #111; min-height: 132px;
+      transition: border-color 0.2s;
+    }
+    .thumb:hover { border-color: var(--gold-border) }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--transition) }
+    .thumb:hover img { transform: scale(1.04) }
+
+    /* ═══════════════════════════════════════════
+       MOSAIC
+    ═══════════════════════════════════════════ */
+    .gallery-section {
+      padding: 100px 0;
+      background: var(--bg); border-top: 1px solid var(--border);
+    }
+    .mosaic-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 16px }
+    .mosaic-card {
+      position: relative; height: 240px; border-radius: 20px;
+      overflow: hidden; border: 1px solid var(--border); background: #111; cursor: pointer;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .mosaic-card:hover { border-color: var(--gold-border); box-shadow: 0 12px 40px rgba(0,0,0,0.4) }
+    .mosaic-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--transition) }
+    .mosaic-card:hover img { transform: scale(1.06) }
+    .mosaic-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.04) 55%);
+    }
+    .mosaic-label {
+      position: absolute; left: 16px; bottom: 16px; z-index: 2;
+      color: #fff; font-family: 'Oswald', sans-serif; font-size: 1.35rem;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .mosaic-card:nth-child(1) { grid-column: span 2 }
+
+    /* ═══════════════════════════════════════════
+       CTA BOX
+    ═══════════════════════════════════════════ */
+    .cta-section { padding: 80px 0; background: var(--bg) }
+    .cta-box {
+      padding: 44px 48px; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(40,30,10,0.5), rgba(14,12,6,0.97));
+      border: 1px solid var(--gold-border);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 28px; flex-wrap: wrap; position: relative; overflow: hidden;
+      transition: box-shadow 0.3s;
+    }
+    .cta-box:hover { box-shadow: var(--shadow-gold) }
+    .cta-box::before {
+      content: ''; position: absolute; right: -80px; top: -80px;
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(216,155,29,0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box::after {
+      content: ''; position: absolute; left: -40px; bottom: -60px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(216,155,29,0.06), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box h3 {
+      font-family: 'Oswald', sans-serif; text-transform: uppercase;
+      font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 10px; position: relative; z-index: 1;
+    }
+    .cta-box p {
+      color: rgba(255,255,255,0.58); line-height: 1.75; max-width: 680px;
+      font-size: 0.97rem; position: relative; z-index: 1;
+    }
+    .cta-box .cta-actions { position: relative; z-index: 1 }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
+    .footer {
+      padding: 32px 0; background: rgba(0,0,0,0.6);
+      border-top: 1px solid var(--border);
+      text-align: center; color: var(--text-muted); font-size: 0.88rem;
+    }
+
+    /* ═══════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════ */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 5000;
+      padding: 14px 20px; border-radius: 14px;
+      background: rgba(20,20,20,0.95); border: 1px solid var(--gold-border);
+      color: #fff; font-size: 0.9rem; backdrop-filter: blur(14px);
+      transform: translateY(20px); opacity: 0;
+      transition: all 0.3s var(--ease-out);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1 }
+    .toast i { color: var(--gold) }
+
+    /* ═══════════════════════════════════════════
+       SCROLL REVEAL
+    ═══════════════════════════════════════════ */
+    .reveal, .reveal-left, .reveal-right {
+      will-change: transform, opacity;
+      transition: opacity 0.85s var(--ease-out), transform 0.85s var(--ease-out);
+    }
+    .reveal         { opacity: 0; transform: translateY(32px) }
+    .reveal-left    { opacity: 0; transform: translateX(-42px) }
+    .reveal-right   { opacity: 0; transform: translateX(42px) }
+    .reveal.show, .reveal-left.show, .reveal-right.show {
+      opacity: 1; transform: translate(0)
+    }
+
+    /* ═══════════════════════════════════════════
+       BACK TO TOP
+    ═══════════════════════════════════════════ */
+    #back-to-top {
+      position: fixed; bottom: 28px; right: 28px; z-index: 2000;
+      width: 46px; height: 46px; border-radius: 14px;
+      background: var(--gold); color: #0e0e0e; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem;
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.35s var(--transition);
+      box-shadow: 0 8px 20px rgba(216,155,29,0.35);
+    }
+    #back-to-top.visible { transform: translateY(0); opacity: 1 }
+    #back-to-top:hover { transform: translateY(-3px); background: var(--gold-light) }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media(max-width:1100px) {
+      .category-grid { grid-template-columns: repeat(2,1fr) }
+      .catalog-block, .catalog-block.reverse { grid-template-columns: 1fr; gap: 36px }
+      .catalog-block.reverse .catalog-gallery { order: -1 }
+      .mosaic-grid { grid-template-columns: repeat(2,1fr) }
+      .mosaic-card:nth-child(1) { grid-column: span 1 }
+    }
+    @media(max-width:980px) {
+      .navbar { flex-wrap: nowrap }
+      .menu-toggle { display: flex }
+      .phone { display: none }
+      .nav-links {
+        position: absolute; top: 72px; left: 0; right: 0; width: 100%;
+        flex-direction: column; align-items: center; gap: 4px;
+        padding: 20px 16px 24px;
+        background: rgba(8,8,8,0.97); backdrop-filter: blur(20px);
+        border: 1px solid var(--border); border-radius: 24px;
+        opacity: 0; pointer-events: none; transform: translateY(-10px);
+        transition: all 0.3s var(--ease-out);
+      }
+      .nav-links.open { opacity: 1; pointer-events: auto; transform: translateY(0) }
+      .nav-links li { width: 100%; text-align: center }
+      .nav-links a { display: block; padding: 10px; border-radius: 10px }
+      .nav-links a:hover { background: rgba(255,255,255,0.05) }
+      .catalog-gallery { grid-template-columns: 1fr }
+      .main-image { grid-row: auto; min-height: 300px }
+    }
+    @media(max-width:700px) {
+      .container { width: calc(100% - 28px) }
+      .navbar { width: calc(100% - 24px); padding: 12px 16px }
+      .category-grid { grid-template-columns: 1fr }
+      .category-grid.list-view .category-card { grid-template-columns: 1fr }
+      .category-grid.list-view .category-image { height: 200px }
+      .mosaic-grid { grid-template-columns: 1fr }
+      .filter-section { top: 70px }
+      .warning-box { grid-template-columns: 1fr }
+      .hero-stats { gap: 8px }
+      .cta-box { padding: 28px 24px }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div id="progress-bar"></div>
+
+<!-- Cursor glow -->
+<div id="cursor-glow"></div>
+
+<!-- Back to top -->
+<button id="back-to-top" aria-label="Revenir en haut"><i class="fa-solid fa-chevron-up"></i></button>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg"></span></div>
+
+<!-- ══ AGE MODAL ══ -->
+<div class="age-modal" id="ageModal">
+  <div class="age-modal-card">
+    <div class="age-modal-icon"><i class="fa-solid fa-shield-halved"></i></div>
+    <span class="age-modal-label">Accès réservé</span>
+    <h2>Confirmation d'âge</h2>
+    <p>Ce catalogue présente des articles réglementés réservés aux personnes majeures. En continuant, vous confirmez avoir <strong>18 ans ou plus</strong> et respecter la réglementation en vigueur.</p>
+    <div class="age-modal-actions">
+      <button id="confirmAge" class="btn-primary"><i class="fa-solid fa-check"></i> J'ai 18 ans ou plus</button>
+      <a href="/src/index.html" class="btn-secondary">Quitter</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NAVBAR ══ -->
+<header class="navbar" id="navbar">
+  <div class="brand">
+    <img src="/img/logo-indiana.png" alt="Logo Indiana Shop" class="brand-logo">
+    <div class="logo" id="nav-brand">INDIANA SHOP</div>
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/src/Index.html#accueil">Accueil</a></li>
+    <li><a href="/src/Index.html#apropos">À Propos</a></li>
+    <li><a href="/src/Index.html#services">Services</a></li>
+    <li><a href="/page/catalogue.html" class="active">Catalogue</a></li>
+    <li><a href="/src/Index.html#actualites">Actualités</a></li>
+    <li><a href="/src/Index.html#horaires">Horaires</a></li>
+    <li><a href="/src/Index.html#contact">Contact</a></li>
+  </ul>
+  <a id="nav-phone-link" href="tel:0594318250" class="phone">
+    <i class="fa-solid fa-phone"></i>
+    <span id="nav-phone">05 94 31 82 50</span>
+  </a>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="catalog-hero">
+  <div class="hero-ambient"></div>
+  <div class="container">
+    <div class="hero-content">
+      <nav class="breadcrumb">
+        <a href="/src/Index.html">Accueil</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>Catalogue</span>
+      </nav>
+      <span class="hero-badge"><i class="fa-solid fa-book-open"></i> CATALOGUE INDIANA SHOP</span>
+      <h1 class="hero-title" id="cath-title">Notre<br><em>Catalogue</em></h1>
+      <p class="hero-desc" id="cath-desc">Découvrez l'ensemble de nos gammes — répliques, accessoires, équipements et bien plus. Tout est présenté dans le magasin, disponible sur place.</p>
+      <div class="hero-stats">
+        <div class="hero-stat-pill">
+          <div class="hero-stat-num" id="stat-categories">6</div>
+          <div class="hero-stat-label">Catégories</div>
+        </div>
+        <div class="hero-stat-pill">
+          <div class="hero-stat-num"><i class="fa-solid fa-store" style="font-size:1.1rem"></i></div>
+          <div class="hero-stat-label">Disponible en magasin</div>
+        </div>
+        <div class="hero-stat-pill">
+          <div class="hero-stat-num">18+</div>
+          <div class="hero-stat-label">Accès réservé</div>
+        </div>
+      </div>
+      <div class="hero-buttons">
+        <a href="#categories" class="btn-primary" id="cath-btn1"><i class="fa-solid fa-grid-2"></i> Explorer le catalogue</a>
+        <a href="/src/Index.html#contact" class="btn-secondary" id="cath-btn2"><i class="fa-solid fa-envelope"></i> Nous contacter</a>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator" id="scrollIndicator">
+    <div class="scroll-indicator-line"></div>
+    <span>Défiler</span>
+  </div>
+</section>
+
+<!-- ══ WARNING ══ -->
+<section class="warning-section">
+  <div class="container">
+    <div class="warning-box reveal">
+      <div class="warning-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="warning-content">
+        <span class="warning-label">Avertissement 18+</span>
+        <h2 id="warn-title">Vente réservée aux personnes majeures</h2>
+        <p id="warn-text1">La vente des articles réglementés est strictement limitée aux personnes âgées de <strong>18 ans et plus</strong>. Une pièce d'identité peut être demandée en magasin.</p>
+        <p id="warn-text2">En consultant ce catalogue, vous confirmez être majeur et respecter la réglementation applicable à votre situation et à votre lieu de résidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FILTER BAR — STICKY ══ -->
+<section class="filter-section" id="filterSection">
+  <div class="container">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher une catégorie…" autocomplete="off">
+        <button class="search-clear" id="searchClear" aria-label="Effacer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="filter-pills" id="filterPills">
+        <button class="filter-pill active" data-filter="all">Tout <span class="pill-count" id="count-all">6</span></button>
+        <button class="filter-pill" data-filter="repliques">Répliques <span class="pill-count" id="count-repliques">3</span></button>
+        <button class="filter-pill" data-filter="accessoires">Accessoires <span class="pill-count" id="count-accessoires">1</span></button>
+        <button class="filter-pill" data-filter="equipements">Équipements <span class="pill-count" id="count-equipements">1</span></button>
+        <button class="filter-pill" data-filter="divers">Divers <span class="pill-count" id="count-divers">1</span></button>
+      </div>
+    </div>
+    <div class="results-bar">
+      <p class="results-count"><span id="visibleCount">6</span> catégorie(s) affichée(s)</p>
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" title="Vue grille"><i class="fa-solid fa-grid-2"></i></button>
+        <button class="view-btn" id="listViewBtn" title="Vue liste"><i class="fa-solid fa-list"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CATEGORIES GRID ══ -->
+<section class="categories-section" id="categories">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="section-label">— Parcourir</span>
+      <h2 class="section-title">Toutes les catégories</h2>
+      <p class="section-subtitle">Cliquez sur une catégorie pour découvrir les produits disponibles en boutique.</p>
+    </div>
+
+    <div class="category-grid" id="categoryGrid">
+
+      <!-- Card 01 — Poing -->
+      <article class="category-card animating" style="--delay:0.05s"
+        data-filter-tags="repliques"
+        data-search="poing réplique pistolet revolver">
+        <div class="category-image">
+          <div class="category-image-bg" style="background-image:url('/img/pistol1.png')"></div>
+          <span class="category-badge">Répliques</span>
+          <span class="category-count"><i class="fa-solid fa-tag"></i> Poing</span>
+          <div class="category-footer-img">
+            <div class="category-icon"><i class="fa-solid fa-hand"></i></div>
+            <h3 id="catgrid-c1">Poing</h3>
+          </div>
+        </div>
+        <div class="category-body">
+          <p class="category-desc" id="catgrid-c1-desc">Répliques de poing : pistolets, revolvers et dérivés disponibles en magasin. Plusieurs finitions et calibres selon les modèles.</p>
+          <div class="category-tags">
+            <span class="category-tag">Pistolets</span>
+            <span class="category-tag">Revolvers</span>
+            <span class="category-tag">Airsoft</span>
+            <span class="category-tag">Alarme</span>
+          </div>
+          <a href="/product/product.html?category=poing" class="card-btn">
+            Voir la catégorie
+            <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 02 — Court -->
+      <article class="category-card animating" style="--delay:0.1s"
+        data-filter-tags="repliques"
+        data-search="court carabine réplique courte compact">
+        <div class="category-image">
+          <div class="category-image-bg" style="background-image:url('/img/cat-accesoires-main.png')"></div>
+          <span class="category-badge">Répliques</span>
+          <span class="category-count"><i class="fa-solid fa-tag"></i> Court</span>
+          <div class="category-footer-img">
+            <div class="category-icon"><i class="fa-solid fa-circle-dot"></i></div>
+            <h3 id="catgrid-c2">Court</h3>
+          </div>
+        </div>
+        <div class="category-body">
+          <p class="category-desc" id="catgrid-c2-desc">Répliques de format court : une sélection de modèles compacts disponibles en magasin, pour collectionneurs et passionnés.</p>
+          <div class="category-tags">
+            <span class="category-tag">Format compact</span>
+            <span class="category-tag">Collectionneurs</span>
+            <span class="category-tag">Airsoft</span>
+          </div>
+          <a href="/product/product.html?category=court" class="card-btn">
+            Voir la catégorie
+            <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 03 — Long -->
+      <article class="category-card animating" style="--delay:0.15s"
+        data-filter-tags="repliques"
+        data-search="long fusil carabine réplique longue">
+        <div class="category-image">
+          <div class="category-image-bg" style="background-image:url('/img/cat-long.png')"></div>
+          <span class="category-badge">Répliques</span>
+          <span class="category-count"><i class="fa-solid fa-tag"></i> Long</span>
+          <div class="category-footer-img">
+            <div class="category-icon"><i class="fa-solid fa-shield"></i></div>
+            <h3 id="catgrid-c3">Long</h3>
+          </div>
+        </div>
+        <div class="category-body">
+          <p class="category-desc" id="catgrid-c3-desc">Répliques longues : fusils, carabines et modèles de plus grande envergure. Disponibles en magasin selon les stocks.</p>
+          <div class="category-tags">
+            <span class="category-tag">Fusils</span>
+            <span class="category-tag">Carabines</span>
+            <span class="category-tag">Airsoft</span>
+          </div>
+          <a href="/product/product.html?category=long" class="card-btn">
+            Voir la catégorie
+            <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 04 — Accessoires -->
+      <article class="category-card animating" style="--delay:0.2s"
+        data-filter-tags="accessoires"
+        data-search="accessoires holster étui chargeur optique viseur">
+        <div class="category-image">
+          <div class="category-image-bg" style="background-image:url('/img/viseur.png')"></div>
+          <span class="category-badge">Accessoires</span>
+          <span class="category-count"><i class="fa-solid fa-tag"></i> Accessoires</span>
+          <div class="category-footer-img">
+            <div class="category-icon"><i class="fa-solid fa-toolbox"></i></div>
+            <h3 id="catgrid-c4">Accessoires</h3>
+          </div>
+        </div>
+        <div class="category-body">
+          <p class="category-desc" id="catgrid-c4-desc">Holsters, étuis, optiques, chargeurs et consommables. Tout ce qu'il faut pour compléter votre équipement.</p>
+          <div class="category-tags">
+            <span class="category-tag">Holsters</span>
+            <span class="category-tag">Optiques</span>
+            <span class="category-tag">Chargeurs</span>
+            <span class="category-tag">Entretien</span>
+          </div>
+          <a href="/product/product.html?category=accessoires" class="card-btn">
+            Voir la catégorie
+            <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 05 — Équipements -->
+      <article class="category-card animating" style="--delay:0.25s"
+        data-filter-tags="equipements"
+        data-search="équipements protection tenue sac gilet tactique">
+        <div class="category-image">
+          <div class="category-image-bg" style="background-image:url('/img/équipement1.png')"></div>
+          <span class="category-badge">Équipements</span>
+          <span class="category-count"><i class="fa-solid fa-tag"></i> Équipements</span>
+          <div class="category-footer-img">
+            <div class="category-icon"><i class="fa-solid fa-helmet-safety"></i></div>
+            <h3 id="catgrid-c5">Équipements</h3>
+          </div>
+        </div>
+        <div class="category-body">
+          <p class="category-desc" id="catgrid-c5-desc">Protections, gilets, tenues tactiques, sacs et équipements complémentaires pour les activités de terrain.</p>
+          <div class="category-tags">
+            <span class="category-tag">Gilets</span>
+            <span class="category-tag">Tenues</span>
+            <span class="category-tag">Protections</span>
+            <span class="category-tag">Sacs</span>
+          </div>
+          <a href="/product/product.html?category=equipements" class="card-btn">
+            Voir la catégorie
+            <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 06 — Divers -->
+      <article class="category-card animating" style="--delay:0.3s"
+        data-filter-tags="divers"
+        data-search="divers nouveautés arrivages collections">
+        <div class="category-image">
+          <div class="category-image-bg" style="background-image:url('/img/divers.png')"></div>
+          <span class="category-badge" style="background:rgba(216,155,29,0.2); border-color:rgba(216,155,29,0.5)">Nouveautés</span>
+          <span class="category-count"><i class="fa-solid fa-tag"></i> Divers</span>
+          <div class="category-footer-img">
+            <div class="category-icon"><i class="fa-solid fa-box-open"></i></div>
+            <h3 id="catgrid-c6">Divers</h3>
+          </div>
+        </div>
+        <div class="category-body">
+          <p class="category-desc" id="catgrid-c6-desc">Nouveautés, arrivages récents et pièces hors catégorie. Un espace évolutif mis à jour régulièrement en fonction des stocks.</p>
+          <div class="category-tags">
+            <span class="category-tag">Nouveautés</span>
+            <span class="category-tag">Arrivages</span>
+            <span class="category-tag">Collections</span>
+          </div>
+          <a href="/product/product.html?category=divers" class="card-btn">
+            Voir la catégorie
+            <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+      </article>
+
+    </div><!-- /category-grid -->
+
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <p>Aucune catégorie ne correspond à votre recherche.</p>
+      <small>Essayez un autre mot-clé ou réinitialisez les filtres.</small>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DÉTAIL SECTIONS ══ -->
+<section class="detail-section">
+  <div class="container">
+    <div class="section-heading-center reveal">
+      <span class="section-label">— En détail</span>
+      <h2 class="section-title" style="text-align:center">Zoom sur les univers</h2>
+      <p class="section-subtitle" style="text-align:center;max-width:680px;margin:0 auto">Chaque univers du magasin mérite une présentation complète. Voici ce que vous trouverez en rayon.</p>
+    </div>
+
+    <div class="catalog-block">
+      <div class="catalog-text reveal-left">
+        <span class="small-label">Catégorie — Poing</span>
+        <h3>Répliques de poing</h3>
+        <p>Notre gamme de répliques de poing couvre un large éventail de modèles : pistolets semi-automatiques, revolvers et variantes. Chaque modèle est exposé en magasin pour que vous puissiez le voir et le manipuler avant tout achat.</p>
+        <ul class="catalog-list">
+          <li>Modèles airsoft et alarme disponibles</li>
+          <li>Plusieurs finitions : noir, inox, bois</li>
+          <li>Conseils personnalisés en magasin</li>
+          <li>Stock régulièrement renouvelé</li>
+        </ul>
+        <div class="mini-tags">
+          <span>Airsoft</span><span>Alarme</span><span>Collectionneurs</span>
+        </div>
+      </div>
+      <div class="catalog-gallery reveal-right">
+        <div class="main-image"><img src="/img/pistol1.png" alt="Répliques de poing" loading="lazy"></div>
+        <div class="thumb"><img src="/img/pistol4.png" alt="" loading="lazy"></div>
+        <div class="thumb"><img src="/img/pistol2.png" alt="" loading="lazy"></div>
+        <div class="thumb"><img src="/img/pistol3.png" alt="" loading="lazy"></div>
+      </div>
+    </div>
+
+    <div class="catalog-block reverse">
+      <div class="catalog-gallery reveal-left">
+        <div class="main-image"><img src="/img/cat-court-1.png" alt="Répliques courtes" loading="lazy"></div>
+        <div class="thumb"><img src="/img/cat-court-4.png" alt="" loading="lazy"></div>
+        <div class="thumb"><img src="/img/cat-cout-3.png" alt="" loading="lazy"></div>
+        <div class="thumb"><img src="/img/cat-long-2.png" alt="" loading="lazy"></div>
+      </div>
+      <div class="catalog-text reveal-right">
+        <span class="small-label">Catégorie — Court</span>
+        <h3>Répliques courtes</h3>
+        <p>Des modèles compacts sélectionnés pour leur équilibre entre maniabilité et réalisme. Idéaux pour les collectionneurs ou les pratiquants d'airsoft recherchant un format réduit.</p>
+        <ul class="catalog-list">
+          <li>Format compact facilement transportable</li>
+          <li>Modèles d'entrée de gamme et premium</li>
+          <li>Disponibles à l'essai en magasin</li>
+          <li>Accessoires compatibles en stock</li>
+        </ul>
+        <div class="mini-tags">
+          <span>Compact</span><span>Polyvalent</span><span>Airsoft</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GALERIE ══ -->
+<section class="gallery-section">
+  <div class="container">
+    <div class="section-heading reveal">
+      <span class="section-label">— Galerie</span>
+      <h2 class="section-title">L'univers Indiana Shop</h2>
+      <p class="section-subtitle">Un aperçu de l'ambiance et des gammes disponibles en magasin.</p>
+    </div>
+    <div class="mosaic-grid">
+      <div class="mosaic-card reveal"><img src="/img/pistol1.png" alt="Répliques poing" loading="lazy"><div class="mosaic-label">Répliques poing</div></div>
+      <div class="mosaic-card reveal"><img src="/img/cat-accesoires-main.png" alt="Formats courts" loading="lazy"><div class="mosaic-label">Formats courts</div></div>
+      <div class="mosaic-card reveal"><img src="/img/équipement1.png" alt="Équipements" loading="lazy"><div class="mosaic-label">Équipements</div></div>
+      <div class="mosaic-card reveal"><img src="/img/viseur.png" alt="Accessoires" loading="lazy"><div class="mosaic-label">Accessoires</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <div>
+        <h3 id="catcta-title">Un produit ne figure pas dans le catalogue ?</h3>
+        <p id="catcta-text">Notre gamme évolue régulièrement. Contactez-nous ou passez directement en magasin — notre équipe est là pour répondre à vos questions et vérifier la disponibilité.</p>
+      </div>
+      <div class="cta-actions">
+        <a href="/src/Index.html#contact" class="btn-primary" id="catcta-btn">
+          <i class="fa-solid fa-envelope"></i> Nous contacter
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <span id="footer-text">© 2026 Indiana Shop — Tous droits réservés</span>
+</footer>
+
+<script type="module">
+  /* ── Cursor glow ────────────────────────────────── */
+  const glow = document.getElementById('cursor-glow');
+  let mx = -999, my = -999;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY });
+  function animateGlow() {
+    glow.style.left = mx + 'px';
+    glow.style.top  = my + 'px';
+    requestAnimationFrame(animateGlow);
+  }
+  animateGlow();
+
+  /* ── Progress bar ───────────────────────────────── */
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (scrollTop / docH * 100) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  /* ── Scroll indicator hide ──────────────────────── */
+  const scrollIndicator = document.getElementById('scrollIndicator');
+  window.addEventListener('scroll', () => {
+    scrollIndicator.classList.toggle('hide', window.scrollY > 80);
+  }, { passive: true });
+
+  /* ── Age modal ──────────────────────────────────── */
+  const ageModal = document.getElementById('ageModal');
+  if (localStorage.getItem('ageConfirmed') === 'true') ageModal.classList.add('hidden');
+  document.getElementById('confirmAge').addEventListener('click', () => {
+    localStorage.setItem('ageConfirmed', 'true');
+    ageModal.style.animation = 'none';
+    ageModal.style.opacity = '0';
+    ageModal.style.transition = 'opacity 0.35s ease';
+    setTimeout(() => ageModal.classList.add('hidden'), 350);
+    showToast('Bienvenue sur le catalogue Indiana Shop !');
+  });
+
+  /* ── Toast ──────────────────────────────────────── */
+  function showToast(msg, duration = 3500) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  /* ── Navbar ─────────────────────────────────────── */
+  const navbar     = document.getElementById('navbar');
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks   = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menuToggle.classList.remove('active'); navLinks.classList.remove('open');
+  }));
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 980) { menuToggle.classList.remove('active'); navLinks.classList.remove('open') }
+  });
+  const syncNav = () => navbar.classList.toggle('scrolled', window.scrollY > 50);
+  window.addEventListener('scroll', syncNav, { passive: true });
+  syncNav();
+
+  /* ── Filter section elevation ───────────────────── */
+  const filterSection = document.getElementById('filterSection');
+  const categoriesSection = document.getElementById('categories');
+  const filterObserver = new IntersectionObserver(([entry]) => {
+    filterSection.classList.toggle('elevated', !entry.isIntersecting);
+  }, { threshold: 0, rootMargin: '-80px 0px 0px 0px' });
+  filterObserver.observe(categoriesSection);
+
+  /* ── Scroll reveal ──────────────────────────────── */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show') });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => revealObserver.observe(el));
+
+  /* ── Back to top ────────────────────────────────── */
+  const backTop = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    backTop.classList.toggle('visible', window.scrollY > 500);
+  }, { passive: true });
+  backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ── View toggle ────────────────────────────────── */
+  const grid = document.getElementById('categoryGrid');
+  document.getElementById('gridViewBtn').addEventListener('click', function() {
+    grid.classList.remove('list-view');
+    this.classList.add('active');
+    document.getElementById('listViewBtn').classList.remove('active');
+  });
+  document.getElementById('listViewBtn').addEventListener('click', function() {
+    grid.classList.add('list-view');
+    this.classList.add('active');
+    document.getElementById('gridViewBtn').classList.remove('active');
+  });
+
+  /* ── Search & Filter ────────────────────────────── */
+  const cards       = Array.from(document.querySelectorAll('#categoryGrid .category-card'));
+  const pills       = document.querySelectorAll('.filter-pill');
+  const searchInput = document.getElementById('searchInput');
+  const searchClear = document.getElementById('searchClear');
+  const noResults   = document.getElementById('noResults');
+  const countEl     = document.getElementById('visibleCount');
+
+  let activeFilter = 'all';
+  let searchQuery  = '';
+
+  function updateGrid() {
+    let visible = 0;
+    cards.forEach(card => {
+      const tags    = card.dataset.filterTags || '';
+      const search  = (card.dataset.search || '') + ' ' + (card.querySelector('h3')?.textContent || '');
+      const matchF  = activeFilter === 'all' || tags.includes(activeFilter);
+      const matchS  = !searchQuery || search.toLowerCase().includes(searchQuery);
+      const show    = matchF && matchS;
+      card.classList.toggle('hidden-card', !show);
+      if (show) visible++;
+    });
+    countEl.textContent = visible;
+    noResults.classList.toggle('show', visible === 0);
+  }
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilter = pill.dataset.filter;
+      updateGrid();
+    });
+  });
+
+  searchInput.addEventListener('input', () => {
+    searchQuery = searchInput.value.trim().toLowerCase();
+    searchClear.classList.toggle('visible', searchQuery.length > 0);
+    updateGrid();
+  });
+
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchQuery = '';
+    searchClear.classList.remove('visible');
+    updateGrid();
+    searchInput.focus();
+  });
+
+  /* ── Keyboard shortcut: / to focus search ─────── */
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== searchInput) {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (e.key === 'Escape') {
+      searchInput.blur();
+      menuToggle.classList.remove('active');
+      navLinks.classList.remove('open');
+    }
+  });
+</script>
+</body>
+</html>

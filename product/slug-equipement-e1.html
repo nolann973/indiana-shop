@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produit - Indiana Shop</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    :root{
+      --white:#ffffff;
+      --gold:#d89b1d;
+      --gold-light:#ebb03a;
+      --text-muted:rgba(255,255,255,0.64);
+      --bg-card-1:rgba(42,42,42,0.88);
+      --bg-card-2:rgba(29,29,29,0.92);
+      --border:rgba(255,255,255,0.08);
+      --shadow:0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    body{
+      font-family:'Inter', sans-serif;
+      background:#050505;
+      color:var(--white);
+      overflow-x:hidden;
+    }
+
+    a{
+      text-decoration:none;
+    }
+
+    img{
+      max-width:100%;
+      display:block;
+    }
+
+    .container{
+      width:min(1280px, calc(100% - 40px));
+      margin:0 auto;
+    }
+
+    .navbar{
+      position:fixed;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      width:calc(100% - 40px);
+      max-width:1280px;
+      z-index:1000;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:16px 28px;
+      background:rgba(18,18,18,0.45);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:999px;
+      box-shadow:0 10px 35px rgba(0,0,0,0.22);
+      transition:all 0.35s ease;
+    }
+
+    .navbar.scrolled{
+      background:rgba(10,10,10,0.72);
+      border-color:rgba(216,155,29,0.14);
+      box-shadow:0 14px 40px rgba(0,0,0,0.35);
+      padding:13px 24px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
+    .brand-logo{
+      width:46px;
+      height:46px;
+      object-fit:contain;
+      border-radius:50%;
+      background:#fff;
+      padding:3px;
+    }
+
+    .logo{
+      font-family:'Oswald', sans-serif;
+      font-size:1.7rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:#f2f2f2;
+      white-space:nowrap;
+    }
+
+    .menu-toggle{
+      display:none;
+      width:48px;
+      height:48px;
+      border:none;
+      border-radius:14px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:5px;
+      transition:0.3s ease;
+    }
+
+    .menu-toggle span{
+      display:block;
+      width:22px;
+      height:2px;
+      background:#fff;
+      border-radius:20px;
+      transition:0.3s ease;
+    }
+
+    .menu-toggle.active span:nth-child(1){
+      transform:translateY(7px) rotate(45deg);
+    }
+
+    .menu-toggle.active span:nth-child(2){
+      opacity:0;
+    }
+
+    .menu-toggle.active span:nth-child(3){
+      transform:translateY(-7px) rotate(-45deg);
+    }
+
+    .nav-links{
+      display:flex;
+      list-style:none;
+      gap:30px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+
+    .nav-links a{
+      position:relative;
+      color:rgba(255,255,255,0.78);
+      font-size:1rem;
+      font-weight:500;
+      padding:8px 0;
+      transition:color 0.3s ease, transform 0.3s ease;
+    }
+
+    .nav-links a::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:-4px;
+      width:0;
+      height:2px;
+      background:var(--gold);
+      border-radius:50px;
+      transition:width 0.3s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active{
+      color:var(--gold);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after{
+      width:100%;
+    }
+
+    .phone{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:#fff;
+      font-size:1rem;
+      white-space:nowrap;
+      transition:0.3s ease;
+      flex-shrink:0;
+    }
+
+    .phone:hover{
+      color:var(--gold);
+    }
+
+    .hero{
+      min-height:42vh;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.40), rgba(0,0,0,0.82)),
+        linear-gradient(to right, rgba(0,0,0,0.68), rgba(0,0,0,0.22)),
+        center center / cover no-repeat;
+      display:flex;
+      align-items:flex-end;
+      padding:180px 0 70px;
+      position:relative;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:130px;
+      background:linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+
+    .hero-content{
+      position:relative;
+      z-index:2;
+    }
+
+    .hero-label{
+      display:inline-block;
+      color:var(--gold);
+      font-weight:700;
+      letter-spacing:2px;
+      margin-bottom:14px;
+    }
+
+    .hero-title{
+      font-family:'Oswald', sans-serif;
+      text-transform:uppercase;
+      font-size:clamp(2.8rem, 6vw, 5.4rem);
+      line-height:0.95;
+      margin-bottom:12px;
+    }
+
+    .hero-sub{
+      color:rgba(255,255,255,0.72);
+      font-size:1.05rem;
+      max-width:720px;
+      line-height:1.7;
+    }
+
+    .info-strip{
+      padding:18px 0;
+      background:linear-gradient(135deg, rgba(58,42,18,0.38), rgba(28,22,12,0.88));
+      border-top:1px solid rgba(216,155,29,0.18);
+      border-bottom:1px solid rgba(216,155,29,0.18);
+    }
+
+    .info-inline{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      color:#f4f4f4;
+      line-height:1.7;
+    }
+
+    .info-inline i{
+      color:var(--gold);
+      font-size:1.25rem;
+    }
+
+    .section{
+      padding:90px 0;
+      background:
+        radial-gradient(circle at top left, rgba(216,155,29,0.05), transparent 30%),
+        linear-gradient(90deg, #0a0a0a 0%, #121212 50%, #0a0a0a 100%);
+      border-top:1px solid rgba(255,255,255,0.06);
+    }
+
+    .product-layout{
+      display:grid;
+      grid-template-columns:1.08fr 1fr;
+      gap:34px;
+      align-items:start;
+    }
+
+    .gallery{
+      display:grid;
+      gap:16px;
+    }
+
+    .main-image{
+      border-radius:28px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.08);
+      background:#151515;
+      min-height:520px;
+    }
+
+    .main-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .thumb-row{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:16px;
+    }
+
+    .thumb{
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.08);
+      background:#151515;
+      min-height:115px;
+      cursor:pointer;
+    }
+
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .product-panel{
+      padding:30px;
+      border-radius:28px;
+      background:linear-gradient(135deg, var(--bg-card-1), var(--bg-card-2));
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+
+    .badge-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .badge{
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(216,155,29,0.12);
+      border:1px solid rgba(216,155,29,0.18);
+      color:var(--gold);
+      font-size:0.88rem;
+      font-weight:700;
+      letter-spacing:1px;
+    }
+
+    .product-panel h2{
+      font-family:'Oswald', sans-serif;
+      text-transform:uppercase;
+      font-size:clamp(2.2rem, 4vw, 3.5rem);
+      line-height:0.95;
+      margin-bottom:14px;
+    }
+
+    .product-desc{
+      color:rgba(255,255,255,0.68);
+      line-height:1.8;
+      margin-bottom:22px;
+    }
+
+    .price-box{
+      display:flex;
+      align-items:end;
+      gap:12px;
+      margin-bottom:24px;
+    }
+
+    .price{
+      font-family:'Oswald', sans-serif;
+      font-size:2.8rem;
+      color:var(--gold);
+      line-height:1;
+    }
+
+    .price-note{
+      color:rgba(255,255,255,0.42);
+      font-size:0.95rem;
+    }
+
+    .cta-row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:28px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:180px;
+      padding:15px 22px;
+      border-radius:18px;
+      font-weight:800;
+      transition:0.25s ease;
+      border:none;
+      cursor:pointer;
+    }
+
+    .btn-primary{
+      background:var(--gold);
+      color:#141414;
+      box-shadow:0 12px 28px rgba(216,155,29,0.28);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      background:var(--gold-light);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,0.05);
+      color:#fff;
+      border:1px solid rgba(255,255,255,0.10);
+    }
+
+    .btn-secondary:hover{
+      color:var(--gold);
+      border-color:rgba(216,155,29,0.24);
+    }
+
+    .feature-list{
+      list-style:none;
+      display:grid;
+      gap:12px;
+    }
+
+    .feature-list li{
+      position:relative;
+      padding-left:18px;
+      color:rgba(255,255,255,0.78);
+      line-height:1.7;
+    }
+
+    .feature-list li::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:10px;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--gold);
+    }
+
+    .details-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+    }
+
+    .details-card{
+      padding:28px;
+      border-radius:24px;
+      background:linear-gradient(135deg, var(--bg-card-1), var(--bg-card-2));
+      border:1px solid var(--border);
+    }
+
+    .details-card h3{
+      font-family:'Oswald', sans-serif;
+      text-transform:uppercase;
+      font-size:2rem;
+      margin-bottom:16px;
+    }
+
+    .specs{
+      display:grid;
+      gap:12px;
+    }
+
+    .spec-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:12px 0;
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+
+    .spec-row span:first-child{
+      color:rgba(255,255,255,0.54);
+    }
+
+    .spec-row span:last-child{
+      color:#fff;
+      font-weight:600;
+      text-align:right;
+    }
+
+    .text-block{
+      color:rgba(255,255,255,0.68);
+      line-height:1.85;
+    }
+
+    .recommend-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:24px;
+    }
+
+    .recommend-card{
+      overflow:hidden;
+      border-radius:24px;
+      background:linear-gradient(135deg, var(--bg-card-1), var(--bg-card-2));
+      border:1px solid var(--border);
+      transition:0.35s ease;
+    }
+
+    .recommend-card:hover{
+      transform:translateY(-6px);
+      border-color:rgba(216,155,29,0.24);
+    }
+
+    .recommend-card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+    }
+
+    .recommend-body{
+      padding:22px;
+    }
+
+    .recommend-body h4{
+      font-family:'Oswald', sans-serif;
+      text-transform:uppercase;
+      font-size:1.8rem;
+      margin-bottom:10px;
+    }
+
+    .recommend-body p{
+      color:rgba(255,255,255,0.62);
+      line-height:1.7;
+      margin-bottom:18px;
+    }
+
+    .footer{
+      padding:28px 0;
+      background:#090909;
+      border-top:1px solid rgba(255,255,255,0.05);
+      text-align:center;
+      color:rgba(255,255,255,0.45);
+      font-size:0.95rem;
+    }
+
+    .reveal,
+    .reveal-left,
+    .reveal-right{
+      will-change:transform, opacity;
+      transition:opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(50px);
+    }
+
+    .reveal.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .reveal-left{
+      opacity:0;
+      transform:translateX(-60px);
+    }
+
+    .reveal-left.show{
+      opacity:1;
+      transform:translateX(0);
+    }
+
+    .reveal-right{
+      opacity:0;
+      transform:translateX(60px);
+    }
+
+    .reveal-right.show{
+      opacity:1;
+      transform:translateX(0);
+    }
+
+    @media (max-width: 1100px){
+      .product-layout,
+      .details-grid{
+        grid-template-columns:1fr;
+      }
+
+      .recommend-grid{
+        grid-template-columns:repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 980px){
+      .navbar{
+        justify-content:space-between;
+        flex-wrap:nowrap;
+        gap:12px;
+      }
+
+      .menu-toggle{
+        display:flex;
+      }
+
+      .phone{
+        display:none;
+      }
+
+      .nav-links{
+        position:absolute;
+        top:78px;
+        left:0;
+        right:0;
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:18px;
+        padding:26px 20px 28px;
+        background:rgba(15,15,15,0.96);
+        backdrop-filter:blur(14px);
+        -webkit-backdrop-filter:blur(14px);
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:28px;
+        opacity:0;
+        pointer-events:none;
+        transform:translateY(-10px);
+        transition:0.3s ease;
+      }
+
+      .nav-links.open{
+        opacity:1;
+        pointer-events:auto;
+        transform:translateY(0);
+      }
+
+      .nav-links li{
+        width:100%;
+        text-align:center;
+      }
+
+      .nav-links a{
+        display:inline-block;
+        font-size:1rem;
+        padding:8px 0;
+      }
+    }
+
+    @media (max-width: 700px){
+      .container{
+        width:min(100% - 24px, 1280px);
+      }
+
+      .navbar{
+        width:calc(100% - 20px);
+        padding:16px 14px;
+      }
+
+      .brand-logo{
+        width:40px;
+        height:40px;
+      }
+
+      .logo{
+        font-size:1.4rem;
+      }
+
+      .hero{
+        padding:210px 0 60px;
+      }
+
+      .thumb-row{
+        grid-template-columns:repeat(2, 1fr);
+      }
+
+      .recommend-grid{
+        grid-template-columns:1fr;
+      }
+
+      .info-inline{
+        align-items:flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="brand">
+      <img src="/img/logo-indiana.png" alt="Logo Indiana Shop" class="brand-logo">
+      <div class="logo">INDIANA SHOP</div>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/src/Index.html#accueil">Accueil</a></li>
+      <li><a href="/src/Index.html#apropos">À Propos</a></li>
+      <li><a href="/src/Index.html#services">Services</a></li>
+      <li><a href="/page/catalogue.html" class="active">Catalogue</a></li>
+      <li><a href="/src/Index.html#actualites">Actualités</a></li>
+      <li><a href="/src/Index.html#horaires">Horaires</a></li>
+      <li><a href="/src/Index.html#contact">Contact</a></li>
+    </ul>
+
+    <a href="tel:0594318250" class="phone">
+      <i class="fa-solid fa-phone"></i>
+      <span>05 94 31 82 50</span>
+    </a>
+  </header>
+
+  <section class="hero" id="heroSection">
+    <div class="container">
+      <div class="hero-content reveal">
+        <span class="hero-label" id="heroCategory">FICHE PRODUIT</span>
+        <h1 class="hero-title" id="heroTitle">Produit</h1>
+        <p class="hero-sub" id="heroSubtitle">Chargement du produit...</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="info-strip">
+    <div class="container">
+      <div class="info-inline">
+        <i class="fa-solid fa-circle-info"></i>
+        <p id="infoText">
+          Produit présenté à titre informatif dans le catalogue. Vérifiez la disponibilité en magasin.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="product-layout">
+        <div class="gallery reveal-left">
+          <div class="main-image">
+            <img id="mainProductImage" src="" alt="Produit principal">
+          </div>
+
+          <div class="thumb-row" id="thumbRow"></div>
+        </div>
+
+        <div class="product-panel reveal-right">
+          <div class="badge-row" id="badgeRow"></div>
+
+          <h2 id="productName">Nom du produit</h2>
+
+          <p class="product-desc" id="productDescription">
+            Description du produit...
+          </p>
+
+          <div class="price-box">
+            <div class="price" id="productPrice">0 €</div>
+            <div class="price-note" id="priceNote">Prix indicatif catalogue</div>
+          </div>
+
+          <div class="cta-row">
+            <a href="/src/index.html#contact" class="btn btn-primary">Demander des infos</a>
+            <a href="/page/catalogue.html" class="btn btn-secondary">Retour catalogue</a>
+          </div>
+
+          <ul class="feature-list" id="featureList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="details-grid">
+        <div class="details-card reveal-left">
+          <h3>Caractéristiques</h3>
+          <div class="specs" id="specsBox"></div>
+        </div>
+
+        <div class="details-card reveal-right">
+          <h3>Description</h3>
+          <div class="text-block" id="longDescription"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="details-card reveal" style="margin-bottom:24px;">
+        <h3>Produits associés</h3>
+      </div>
+
+      <div class="recommend-grid" id="recommendGrid"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © 2026 Indiana Shop — Tous droits réservés
+  </footer>
+
+  <script>
+    const PRODUCTS = {
+      "canne-peche-pro": {
+        title: "Canne à pêche Pro X",
+        shortTitle: "Arme",
+        subtitle: "Une fiche produit moderne avec galerie, caractéristiques, description détaillée et suggestions associées.",
+        category: "PÊCHE",
+        heroImage: "/img/product-hero-peche.jpg",
+        price: "149 €",
+        priceNote: "Prix indicatif catalogue",
+        info: "Produit présenté à titre informatif dans le catalogue. Vérifiez la disponibilité en magasin.",
+        badges: ["Pêche", "Disponible en magasin", "Nouveauté"],
+        description: "Une canne pensée pour les passionnés qui recherchent une présentation claire, moderne et plus premium dans le catalogue.",
+        longDescription: "Cette zone permet d’ajouter un texte plus détaillé sur le produit : son usage, son style, ses avantages, et la manière dont il s’intègre à l’univers du magasin. Tu peux aussi utiliser cette fiche pour donner plus de valeur à tes produits grâce à une galerie d’images et un contenu plus crédible.",
+        features: [
+          "Présentation premium du produit",
+          "Galerie d’images multi-angles",
+          "Bloc d’informations techniques",
+          "Page simple à réutiliser"
+        ],
+        specs: {
+          "Catégorie": "Pêche",
+          "Modèle": "Pro X",
+          "Longueur": "2.40 m",
+          "Coloris": "Noir / Or",
+          "Disponibilité": "Selon stock magasin",
+          "Utilisation": "Eau douce / loisir"
+        },
+        images: [
+          "/img/product-peche-main.jpg",
+          "/img/product-peche-1.jpg",
+          "/img/product-peche-2.jpg",
+          "/img/product-peche-3.jpg",
+          "/img/product-peche-4.jpg"
+        ],
+        related: [
+          {
+            title: "Lampe Outdoor L1",
+            text: "Une lampe robuste pour les sorties et activités de plein air.",
+            image: "/img/reco-1.jpg",
+            link: "product.html?slug=lampe-outdoor-l1"
+          },
+          {
+            title: "Sac Camping C2",
+            text: "Un sac pratique pour transporter l’essentiel.",
+            image: "/img/reco-2.jpg",
+            link: "product.html?slug=sac-camping-c2"
+          },
+          {
+            title: "Jumelles Vision J3",
+            text: "Une autre fiche produit à mettre en avant.",
+            image: "/img/reco-3.jpg",
+            link: "product.html?slug=jumelles-j3"
+          }
+        ]
+      },
+
+      "lampe-outdoor-l1": {
+        title: "Lampe Outdoor L1",
+        shortTitle: "Camping",
+        subtitle: "Une fiche élégante pour présenter un accessoire utile et polyvalent.",
+        category: "CAMPING",
+        heroImage: "/img/product-hero-lampe.jpg",
+        price: "39 €",
+        priceNote: "Prix indicatif catalogue",
+        info: "Article présenté à titre informatif. Renseignez-vous en magasin pour la disponibilité.",
+        badges: ["Camping", "Outdoor", "Accessoire"],
+        description: "Une lampe outdoor idéale pour compléter l’univers camping et plein air sur le catalogue.",
+        longDescription: "Cette fiche te permet de présenter clairement un accessoire outdoor avec une galerie propre, une description détaillée et des éléments de réassurance visuelle. C’est une bonne base pour tous les produits annexes du site.",
+        features: [
+          "Format simple et réutilisable",
+          "Rendu visuel moderne",
+          "Parfait pour accessoires outdoor",
+          "Mise en avant plus claire"
+        ],
+        specs: {
+          "Catégorie": "Camping",
+          "Modèle": "L1",
+          "Autonomie": "Jusqu’à 8h",
+          "Coloris": "Noir",
+          "Disponibilité": "Selon stock magasin",
+          "Usage": "Plein air"
+        },
+        images: [
+          "/img/product-lampe-main.jpg",
+          "/img/product-lampe-1.jpg",
+          "/img/product-lampe-2.jpg",
+          "/img/product-lampe-3.jpg",
+          "/img/product-lampe-4.jpg"
+        ],
+        related: [
+          {
+            title: "Canne à pêche Pro X",
+            text: "Un produit principal bien mis en valeur dans le catalogue.",
+            image: "/img/reco-1.jpg",
+            link: "product.html?slug=canne-peche-pro"
+          },
+          {
+            title: "Sac Camping C2",
+            text: "Une autre fiche utile pour l’univers outdoor.",
+            image: "/img/reco-2.jpg",
+            link: "product.html?slug=sac-camping-c2"
+          },
+          {
+            title: "Jumelles Vision J3",
+            text: "Produit associé dans la même logique catalogue.",
+            image: "/img/reco-3.jpg",
+            link: "product.html?slug=jumelles-j3"
+          }
+        ]
+      },
+
+      "sac-camping-c2": {
+        title: "Sac Camping C2",
+        shortTitle: "Camping",
+        subtitle: "Un produit pensé pour les sorties plein air avec une fiche moderne et soignée.",
+        category: "ÉQUIPEMENT",
+        heroImage: "/img/product-hero-sac.jpg",
+        price: "79 €",
+        priceNote: "Prix indicatif catalogue",
+        info: "Produit affiché à titre indicatif. Vérifiez le stock directement auprès du magasin.",
+        badges: ["Camping", "Équipement", "Disponible"],
+        description: "Un sac pratique à présenter dans le catalogue avec un style premium et cohérent avec le reste du site.",
+        longDescription: "Tu peux utiliser cette structure pour les sacs, protections, tenues ou autres équipements. L’objectif est d’avoir une fiche propre, réutilisable et plus professionnelle, qui donne plus de matière au catalogue.",
+        features: [
+          "Parfait pour équipements outdoor",
+          "Bloc produit complet",
+          "Visuels multiples",
+          "Structure cohérente"
+        ],
+        specs: {
+          "Catégorie": "Équipement",
+          "Modèle": "C2",
+          "Capacité": "35 L",
+          "Coloris": "Olive / Noir",
+          "Disponibilité": "Selon stock magasin",
+          "Usage": "Sorties plein air"
+        },
+        images: [
+          "/img/product-sac-main.jpg",
+          "/img/product-sac-1.jpg",
+          "/img/product-sac-2.jpg",
+          "/img/product-sac-3.jpg",
+          "/img/product-sac-4.jpg"
+        ],
+        related: [
+          {
+            title: "Canne à pêche Pro X",
+            text: "Produit principal du catalogue pêche.",
+            image: "/img/reco-1.jpg",
+            link: "product.html?slug=canne-peche-pro"
+          },
+          {
+            title: "Lampe Outdoor L1",
+            text: "Accessoire utile pour le plein air.",
+            image: "/img/reco-2.jpg",
+            link: "product.html?slug=lampe-outdoor-l1"
+          },
+          {
+            title: "Jumelles Vision J3",
+            text: "Produit associé à l’univers nature.",
+            image: "/img/reco-3.jpg",
+            link: "product.html?slug=jumelles-j3"
+          }
+        ]
+      },
+
+      "jumelles-j3": {
+        title: "Jumelles Vision J3",
+        shortTitle: "Outdoor",
+        subtitle: "Une fiche produit claire pour les activités d’observation et de plein air.",
+        category: "ACCESSOIRES",
+        heroImage: "/img/product-hero-jumelles.jpg",
+        price: "59 €",
+        priceNote: "Prix indicatif catalogue",
+        info: "Article présenté dans le catalogue pour information. Contactez le magasin pour plus de détails.",
+        badges: ["Observation", "Outdoor", "Accessoire"],
+        description: "Une fiche idéale pour mettre en avant des jumelles ou d’autres accessoires d’observation.",
+        longDescription: "Cette fiche fonctionne très bien pour les produits orientés observation, randonnée ou nature. Elle te permet d’avoir un design homogène avec le reste du site, tout en mettant mieux en valeur les images et les informations du produit.",
+        features: [
+          "Présentation plus crédible",
+          "Bonne mise en valeur des photos",
+          "Structure simple à adapter",
+          "Univers nature / outdoor"
+        ],
+        specs: {
+          "Catégorie": "Accessoire",
+          "Modèle": "J3",
+          "Grossissement": "10x",
+          "Coloris": "Noir",
+          "Disponibilité": "Selon stock magasin",
+          "Usage": "Observation"
+        },
+        images: [
+          "/img/product-jumelles-main.jpg",
+          "/img/product-jumelles-1.jpg",
+          "/img/product-jumelles-2.jpg",
+          "/img/product-jumelles-3.jpg",
+          "/img/product-jumelles-4.jpg"
+        ],
+        related: [
+          {
+            title: "Canne à pêche Pro X",
+            text: "Autre univers produit à découvrir.",
+            image: "/img/reco-1.jpg",
+            link: "product.html?slug=canne-peche-pro"
+          },
+          {
+            title: "Lampe Outdoor L1",
+            text: "Un accessoire complémentaire.",
+            image: "/img/reco-2.jpg",
+            link: "product.html?slug=lampe-outdoor-l1"
+          },
+          {
+            title: "Sac Camping C2",
+            text: "Une fiche équipement assortie.",
+            image: "/img/reco-3.jpg",
+            link: "product.html?slug=sac-camping-c2"
+          }
+        ]
+      }
+    };
+
+    const slug = new URLSearchParams(window.location.search).get("slug") || "canne-peche-pro";
+    const product = PRODUCTS[slug] || PRODUCTS["canne-peche-pro"];
+
+    document.title = `${product.title} - Indiana Shop`;
+
+    document.getElementById("heroCategory").textContent = product.category;
+    document.getElementById("heroTitle").textContent = product.title;
+    document.getElementById("heroSubtitle").textContent = product.subtitle;
+    document.getElementById("heroSection").style.backgroundImage =
+      `linear-gradient(to bottom, rgba(0,0,0,0.40), rgba(0,0,0,0.82)),
+       linear-gradient(to right, rgba(0,0,0,0.68), rgba(0,0,0,0.22)),
+       url('${product.heroImage}')`;
+
+    document.getElementById("infoText").textContent = product.info;
+    document.getElementById("productName").textContent = product.title;
+    document.getElementById("productDescription").textContent = product.description;
+    document.getElementById("productPrice").textContent = product.price;
+    document.getElementById("priceNote").textContent = product.priceNote;
+    document.getElementById("longDescription").textContent = product.longDescription;
+
+    const badgeRow = document.getElementById("badgeRow");
+    badgeRow.innerHTML = product.badges.map(b => `<span class="badge">${b}</span>`).join("");
+
+    const featureList = document.getElementById("featureList");
+    featureList.innerHTML = product.features.map(item => `<li>${item}</li>`).join("");
+
+    const specsBox = document.getElementById("specsBox");
+    specsBox.innerHTML = Object.entries(product.specs)
+      .map(([k,v]) => `
+        <div class="spec-row">
+          <span>${k}</span>
+          <span>${v}</span>
+        </div>
+      `).join("");
+
+    const mainProductImage = document.getElementById("mainProductImage");
+    mainProductImage.src = product.images[0];
+
+    const thumbRow = document.getElementById("thumbRow");
+    thumbRow.innerHTML = product.images.slice(1).map(img => `
+      <div class="thumb">
+        <img src="${img}" alt="">
+      </div>
+    `).join("");
+
+    thumbRow.querySelectorAll(".thumb img").forEach(img => {
+      img.addEventListener("click", () => {
+        mainProductImage.src = img.src;
+      });
+    });
+
+    const recommendGrid = document.getElementById("recommendGrid");
+    recommendGrid.innerHTML = product.related.map(item => `
+      <div class="recommend-card reveal">
+        <img src="${item.image}" alt="">
+        <div class="recommend-body">
+          <h4>${item.title}</h4>
+          <p>${item.text}</p>
+          <a href="${item.link}" class="btn btn-secondary" style="width:100%;">Voir</a>
+        </div>
+      </div>
+    `).join("");
+
+    const navbar = document.querySelector('.navbar');
+    const revealElements = () => document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    const navItems = navLinks.querySelectorAll('a');
+
+    function handleNavbarScroll() {
+      if (window.scrollY > 40) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    revealElements().forEach(el => observer.observe(el));
+
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    navItems.forEach(link => {
+      link.addEventListener('click', () => {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 980) {
+        menuToggle.classList.remove('active');
+        navLinks.classList.remove('open');
+      }
+    });
+
+    window.addEventListener('scroll', handleNavbarScroll);
+    window.addEventListener('load', handleNavbarScroll);
+  </script>
+
+</body>
+</html>
